@@ -21,13 +21,12 @@ class Ball(pyxphys.GameObject):
         if app.screen_x - self.radius < self.x:
             self.x = app.screen_x - self.radius
             self.vx *= -1
-        
 
-        limit_y = app.screen_y - self.radius # 床の位置
-        if app.screen_y - self.radius < self.y:
+        limit_y = self.world.app.screen_y - self.radius # 床の位置
+        if limit_y < self.y:
             overlap = self.y - limit_y #
             self.y = limit_y - overlap # 床にめり込んだ分だけ戻す
-            self.vy *= -1.0
+            self.vy *= -0.9
 
     def draw(self):
         pyxel.circ(self.x, self.y, self.radius, self.color)

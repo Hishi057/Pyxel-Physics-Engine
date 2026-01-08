@@ -15,6 +15,7 @@ class App:
     
     def add_world(self, world : World):
         self.worlds.append(world)
+        world.app = self
     
     def run(self):
         pyxel.run(self.update, self.draw)
@@ -26,10 +27,10 @@ class App:
     def draw(self):
         pyxel.cls(7)
         for w in self.worlds:
-            for o in w.objects:
-                o.draw()
+            w.draw()
 
 class World:
+    app : App
     objects : list[GameObject]
     gravity : float
     def __init__(self, gravity : float = 0):
@@ -45,11 +46,14 @@ class World:
         self.objects = new_objects
 
         # 物理演算
+        sub_step = 10
+        dt = 1 / sub_step
         for o in self.objects:
-            o.vx += o.ax
-            o.vy += o.ay + self.gravity
-            o.x += o.vx
-            o.y += o.vy
+            for i in range(sub_step):
+                o.vx += o.ax * dt
+                o.vy += o.ay + self.gravity * dt
+                o.x += o.vx * dt
+                o.y += o.vy *dt
             o.update()
         
         # 衝突の処理 
@@ -57,10 +61,17 @@ class World:
             for o2 in self.objects:
                 o1.collide(o2)
 
+    def draw(self):
+        pyxel.cls(7)
+        for o in self.objects:
+            o.draw()
+
     def add_object(self, object : GameObject):
         self.objects.append(object)
+        object.world = self
 
 class GameObject:
+    world : World
     name : str
     is_alive : bool # 消去したければここをFalseにする
     x : float
