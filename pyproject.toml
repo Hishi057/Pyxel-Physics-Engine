@@ -10,6 +10,7 @@ readme = "README.md"
 authors = [{ name = "Hishi057", email = "Hiratsuka512@icloud.com" }]
 dependencies = [
     "pyxel",
+    "math"
 ]
 
 [tool.setuptools.packages.find]
