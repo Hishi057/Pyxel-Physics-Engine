@@ -18,4 +18,6 @@ classifiers = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
-homepage = "https://github.com/Hishi057/Pyxel-Physics-Engine.git"
+
+[project.urls]
+"Homepage" = "https://github.com/Hishi057/Pyxel-Physics-Engine"
