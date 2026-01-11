@@ -27,7 +27,7 @@ class GameObject:
                  ax : float = 0,
                  ay : float = 0,
                  mass : float = 1,
-                 STILL_SHREHOLD : float = 0.5,
+                 STILL_SHREHOLD : float = 0.1,
                  IS_FREEZE_POSITION : bool = False
                  ):
 
@@ -45,6 +45,7 @@ class GameObject:
         self.colliders = []
         self.STILL_SHREHOLD = STILL_SHREHOLD
         self.IS_FREEZE_POSITION = IS_FREEZE_POSITION
+
 
         if self.IS_FREEZE_POSITION:
             self.mass = 1024 * 1024

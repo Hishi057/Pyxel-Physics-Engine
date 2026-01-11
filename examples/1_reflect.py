@@ -45,16 +45,17 @@ class Ball(pyxphys.GameObject):
         angle = pyxel.rndi(30, 150)
         self.vx = pyxel.cos(angle) * 3 + 3
         self.vy = pyxel.rndi(0, 10) * -1
-        self.add_collider(pyxphys.CircleCollider(self.radius))
+        self.add_collider(pyxphys.CircleCollider(self.radius, restitution=0.8))
 
     def draw(self):
         pyxel.circ(self.x, self.y, self.radius, self.color)
 
-class Box(pyxphys.GameObject):
+class Box(pyxphys.GameObject):   
     color : int = 6 # ボールの色
     radius : int = 8 # ボールの半径
     width : float = 20
     height : float = 32
+
 
     def __init__(self):
         super().__init__()

@@ -4,4 +4,5 @@ from .app import App
 from .world import World
 from .engine import GameObject
 from .collision import CircleCollider, BoxCollider, check_collision
+from .constants import CombineMode
 from .utils import distance, distance_object

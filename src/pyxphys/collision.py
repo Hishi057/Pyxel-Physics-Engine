@@ -1,19 +1,35 @@
 from .utils import distance, clamp
 import math
 from .spatial import Rect
+from .constants import CombineMode
 
 class Collider:
     parent : "GameObject"
     is_trigger : bool
     aabb : Rect
+    restitution : float # 反発係数
+    restitution_combine_mode : int # 反発係数の計算方法
+    restitution_priority : int # 高い方が強い
 
-    def __init__(self, offset_x=0, offset_y=0, tag="", is_trigger = False):
+    def __init__(self, 
+                 offset_x=0, 
+                 offset_y=0, 
+                 tag="", 
+                 is_trigger = False, 
+                 restitution = 0.1, 
+                 restitution_combine_mode = CombineMode.MAX,
+                 restitution_priority = 0
+                 ):
         self.offset_x = offset_x
         self.offset_y = offset_y
         self.tag = tag
         self.parent = None
         self.is_trigger = is_trigger
         self.aabb = Rect(0,0,0,0)
+        self.restitution = restitution
+        self.restitution_combine_mode = restitution_combine_mode
+        self.restitution_priority = restitution_priority
+
 
     # ある点がCollisionの中に入っているかどうか返す
     def contains(self, x : float, y : float):
@@ -25,8 +41,10 @@ class Collider:
 
 class CircleCollider(Collider):
     radius : float
-    def __init__(self, radius, offset_x=0, offset_y=0, tag="", is_trigger = False):
-        super().__init__(offset_x, offset_y, tag, is_trigger)
+    def __init__(self, 
+                 radius, 
+                 **kwargs):
+        super().__init__(**kwargs)
         self.radius = radius
 
     # 世界（絶対）座標での中心位置を返す
@@ -49,14 +67,18 @@ class CircleCollider(Collider):
                          ,self.radius * 2
                          )
 
+
 #
 # offset を中心に、縦height, 横width の長方形のCollider
 #
 class BoxCollider(Collider):
     height : float
     width : float
-    def __init__(self, width, height, offset_x=0, offset_y=0, tag="", is_trigger = False):
-        super().__init__(offset_x, offset_y, tag, is_trigger)
+    def __init__(self, 
+                 width, 
+                 height, 
+                 **kwargs):
+        super().__init__(**kwargs)
         self.height = height
         self.width = width
 

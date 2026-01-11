@@ -2,11 +2,62 @@ import math
 from .utils import clamp
 import math
 from .utils import clamp
+from .constants import CombineMode
+
+# ---------------------------------------------------------
+# 反発係数関連
+# ---------------------------------------------------------
+
+# 2つのColliderから最終的な反発係数を取得
+def get_restitution(c1 , c2):
+    r1 = c1.restitution
+    r2 = c2.restitution
+
+    if c1.restitution_priority > c2.restitution_priority:
+        c = c1
+    if c1.restitution_priority < c2.restitution_priority:
+        c = c2
+    
+    if c1.restitution_priority != c2.restitution_priority:
+        if c.restitution_combine_mode == CombineMode.MAX:
+            return max_restitution(r1, r2)
+        if c.restitution_combine_mode == CombineMode.MIN:
+            return min_restitution(r1, r2)
+        if c.restitution_combine_mode == CombineMode.AVERAGE:
+            return average_restitution(r1, r2)
+        if c.restitution_combine_mode == CombineMode.MULTIPLY:
+            return multiply_restitution(r1, r2)
+    else:
+        mode_1 = c1.restitution_combine_mode
+        mode_2 = c2.restitution_combine_mode
+        if mode_1 == CombineMode.MAX or mode_2 == CombineMode.MAX:
+            return max_restitution(r1, r2)
+        if mode_1 == CombineMode.MULTIPLY or mode_2 == CombineMode.MULTIPLY:
+            return multiply_restitution(r1, r2)
+        if mode_1 == CombineMode.MIN or mode_2 == CombineMode.MIN:
+            return min_restitution(r1, r2)
+        if mode_1 == CombineMode.AVERAGE or mode_2 == CombineMode.AVERAGE:
+            return average_restitution(r1, r2)
+    return 0.2
+
+def max_restitution(restitution1, restitution2):
+    return max(restitution1, restitution2)
+
+def min_restitution(restitution1, restitution2):
+    return min(restitution1, restitution2)
+
+def average_restitution(restitution1, restitution2):
+    return (restitution1 + restitution2)/2
+
+def multiply_restitution(restitution1, restitution2):
+    return restitution1 * restitution2
+
+
 
 # ---------------------------------------------------------
 # 共通処理: 物理的な処理
 # ---------------------------------------------------------
-def apply_collision_response(body_a, body_b, nx, ny, depth):
+def apply_collision_response(body_a, body_b, nx, ny, depth, e):
     """
     衝突した2つの物体に対して、位置修正と速度更新を行う
     body_a: 法線ベクトルの始点側の物体 (位置・速度がマイナス方向に補正される)
@@ -41,9 +92,6 @@ def apply_collision_response(body_a, body_b, nx, ny, depth):
     # すでに離れようとしているならスキップ
     if v_normal_mag > 0:
         return
-
-    # 反発係数
-    e = 0.9 
 
     # 逆質量の計算
     inv_m1 = 1.0 / body_a.mass if body_a.mass != float('inf') else 0.0
@@ -88,7 +136,8 @@ def resolve_circle_circle(circle1, circle2):
         ny = dy / dist
         depth = (circle1.radius + circle2.radius) - dist
 
-    apply_collision_response(circle1.parent, circle2.parent, nx, ny, depth)
+    e = get_restitution(circle1, circle2)
+    apply_collision_response(circle1.parent, circle2.parent, nx, ny, depth, e)
 
 
 # circle, box
@@ -114,7 +163,8 @@ def resolve_box_circle(box, circle):
         ny = dy / dist
         depth = circle.radius - dist
 
-    apply_collision_response(circle.parent, box.parent, nx, ny, depth)
+    e = get_restitution(box, circle)
+    apply_collision_response(circle.parent, box.parent, nx, ny, depth, e)
 
 # box, box
 def resolve_box_box(box1, box2):
@@ -135,4 +185,5 @@ def resolve_box_box(box1, box2):
         ny = 1.0 if dy > 0 else -1.0
         depth = overlap_y
     
-    apply_collision_response(box1.parent, box2.parent, nx, ny, depth)
+    e = get_restitution(box1, box2)
+    apply_collision_response(box1.parent, box2.parent, nx, ny, depth, e)

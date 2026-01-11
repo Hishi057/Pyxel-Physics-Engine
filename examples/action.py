@@ -12,11 +12,11 @@ class Player(pyxphys.GameObject):
     def update(self):
         self.vx = self.vx * -1/10
         if pyxel.btnp(pyxel.KEY_SPACE):
-            self.vy = -5
+            self.vy = -10
         if pyxel.btn(pyxel.KEY_D):
-            self.vx = 1
+            self.vx = 3
         if pyxel.btn(pyxel.KEY_A):
-            self.vx = -1
+            self.vx = -3
 
     def draw(self):
         pyxel.rect(self.x - self.width/2, 
