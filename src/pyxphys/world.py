@@ -1,7 +1,8 @@
 import pyxel
 from typing import List
 from .engine import GameObject
-from .collision import check_collision, BoxCollider, CircleCollider, resolve_box_circle, resolve_circle_circle
+from .collision import check_collision, BoxCollider, CircleCollider
+from .resolver import  resolve_box_circle, resolve_circle_circle
 import math
 from itertools import combinations
 
