@@ -137,7 +137,7 @@ class World:
         for o in self.objects:
             for c in o.colliders:
                 c.draw_debug(color=color)
-        if self.app.debug_mode == True:
+        if self.debug_mode == True:
             rate = (self.debug_quadtree_query_count / len(self.objects) ** 2) * 100
             pyxel.text(4, 3,f"[ WORLD DEBUG MODE ]", color)
             pyxel.text(4, 11,f"OBJECT COUNT: {len(self.objects)}", color)
