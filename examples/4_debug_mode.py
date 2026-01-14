@@ -79,8 +79,8 @@ class UI_text(pyxphys.GameObject):
 app = pyxphys.App(screen_x = 300,screen_y= 300, debug_mode=True)
 world = pyxphys.World(gravity = 0.9, debug_mode=True)
 ui = pyxphys.World(gravity = 0)
-app.add_world(world)
-app.add_world(ui)
+app.regist_world(world, "world")
+app.regist_world(ui, "ui")
 
 ui.add_object(UI_text())
 world.add_object(GameManager())

@@ -22,8 +22,9 @@ class Ball(pyxphys.GameObject):
 
 # 初期設定
 app = pyxphys.App(200,200) # アプリ本体
-world = pyxphys.World(gravity = 0.9) # アプリの中における世界
-app.add_world(world) # ゲーム本体に、世界を追加
+world = pyxphys.World(gravity = 0.9) # 世界のルールを決める
+app.regist_world("game", world) # 作った世界を倉庫に名前をつけて登録
+app.push_world("game") # 倉庫からアプリ画面に世界を表示する
 
 world.add_object(Ball()) # "world"という世界にBallオブジェクトを追加
 

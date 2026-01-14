@@ -8,7 +8,8 @@ class App:
     screen_x : int
     screen_y : int
     background_color : int
-    worlds : list[World]
+    active_worlds : list[World]
+    worlds: list[World]
     debug_mode : bool
     debug_color : int
     cam_x : float
@@ -21,21 +22,39 @@ class App:
         self.background_color = background_color
         pyxel.init(screen_x, screen_y)
         self.worlds = []
+        self.active_worlds = []
         self.debug_mode = debug_mode
         self.debug_color = debug_color
         self.cam_x = 0
         self.cam_y = 0
         self.cam_speed = 3
     
-    def add_world(self, world : World):
+    def regist_world(self, world : World, name = ""):
+        world.name = name
         self.worlds.append(world)
         world.app = self
+
+    def push_world(self, name : str):
+        for w in self.worlds:
+            if w.name == name:
+                self.active_worlds.append(w)
+
+    def pop_world(self):
+        self.active_worlds.pop()
+
+    def remove_world(self, name : str):
+        self.active_worlds = [w for w in self.active_worlds if w.name != name]
+
+    def clear_world(self):
+        self.active_worlds = []
     
     def run(self):
+        if not self.active_worlds and self.worlds:
+            self.active_worlds.append(self.worlds[0])
         pyxel.run(self.update, self.draw)
     
     def update(self):
-        for w in self.worlds: 
+        for w in self.active_worlds: 
             w.update_physics()
         if self.debug_mode:
             self.update_debug()
@@ -49,7 +68,7 @@ class App:
     def draw(self):
         pyxel.camera(self.cam_x, self.cam_y)
         pyxel.cls(self.background_color)
-        for w in self.worlds:
+        for w in self.active_worlds:
             w.draw()
         if self.debug_mode:
             self.draw_debug()

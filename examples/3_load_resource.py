@@ -23,9 +23,9 @@ class Looper(pyxphys.GameObject):
 app = pyxphys.App()
 app.load_resource("assets/3_resource.pyxres")
 # pyxel.load("assets/3_resource.pyxres") これはダメ。絶対パスならok
-world = pyxphys.World(gravity = 0)
-app.add_world(world)
 
+world = pyxphys.World(gravity = 0)
 world.add_object(Looper())
 
+app.regist_world(world, "world")
 app.run()

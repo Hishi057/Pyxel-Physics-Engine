@@ -10,19 +10,21 @@ from .geometry import Rect, RaycastHit, Ray
 
 class World:
     app : 'App'
+    name : str
     objects : list[GameObject]
     gravity : float
     sub_step : int
     debug_mode : bool
     debug_color : int
     debug_quadtree_query_count : int
-    def __init__(self, gravity : float = 0, sub_step = 4, debug_mode : bool = False, debug_color = pyxel.COLOR_RED):
+    def __init__(self, gravity : float = 0, sub_step = 4, debug_mode : bool = False, debug_color = pyxel.COLOR_RED, name = "world"):
         self.objects = []
         self.gravity = gravity
         self.sub_step = sub_step
         self.debug_mode = debug_mode
         self.debug_color = debug_color
         self.debug_quadtree_query_count = 0
+        self.name = name
         
 
     def update_physics(self):
@@ -127,7 +129,8 @@ class World:
         return self.get_quadtree().query_ray(ray, max_dist)
 
     def draw(self):
-        for o in self.objects:
+        z_sorted_objects = sorted(self.objects, key=lambda o: o.z)
+        for o in z_sorted_objects:
             o.draw()
         if self.debug_mode:
             self.draw_debug()

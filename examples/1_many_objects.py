@@ -76,11 +76,9 @@ class UI_text(pyxphys.GameObject):
         pyxel.text(self.x, self.y, "PRESS SPACE BUTTON", 0)
 
 # 初期設定
-app = pyxphys.App(screen_x = 300,screen_y= 300, debug_mode=True)
-world = pyxphys.World(gravity = 0.9, debug_mode=True)
+app = pyxphys.App(screen_x = 300,screen_y= 300, debug_mode=False)
+world = pyxphys.World(gravity = 0.9, debug_mode=False, sub_step=10)
 ui = pyxphys.World(gravity = 0)
-app.add_world(world)
-app.add_world(ui)
 
 ui.add_object(UI_text())
 world.add_object(GameManager())
@@ -89,4 +87,6 @@ world.add_object(Wall(x = 150, y = 290, height = 30 , width = 300))
 world.add_object(Wall(x = 295, y = 150, height = 300, width = 30))
 world.add_object(Wall(x =  5, y = 150,  height = 300, width = 30))
 
+app.regist_world(world, "world")
+app.regist_world(ui, "ui")
 app.run() # アプリを実行

@@ -10,6 +10,7 @@ class GameObject:
     is_alive : bool # 消去したければここをFalseにする
     x : float
     y : float
+    z : float # 高いほど手前に描写される
     vx : float
     vy : float
     mass : float
@@ -22,6 +23,7 @@ class GameObject:
                  name : str = "",
                  x : float = 0,
                  y : float = 0,
+                 z : float = 0,
                  vx : float = 0,
                  vy : float = 0,
                  ax : float = 0,
@@ -36,6 +38,7 @@ class GameObject:
         self.name = name
         self.x = x
         self.y = y
+        self.z = z
         self.vx = vx
         self.vy = vy
         self.ax = ax

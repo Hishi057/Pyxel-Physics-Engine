@@ -1,40 +1,44 @@
 import pyxphys 
 import pyxel
 
-# アプリ本体
-app = pyxphys.App(200,200)
-app.load_resource("assets/5_resource.pyxres")
-
 #
 # タイトル画面
 #
 class TitleManager(pyxphys.GameObject):
     game : pyxphys.World
-    def __init__(self, game : pyxphys.World):
-        super().__init__(x=100, y=20)
-        self.name = "background"
-        self.game = game
-    
-    def update(self):
-        if pyxel.btn(pyxel.KEY_SPACE):
-            app.worlds = []
-            app.add_world(game)
-
-class Background(pyxphys.GameObject):
-    tile_size : int = 16
     def __init__(self):
         super().__init__(x=100, y=20)
         self.name = "background"
+    
+    def update(self):
+        if pyxel.btn(pyxel.KEY_SPACE):
+            app.clear_world()
+            app.push_world("game")
+
+class Background(pyxphys.GameObject):
+    tile_size : int = 16
+    time : int
+    def __init__(self):
+        super().__init__(x=100, y=20, z=0)
+        self.name = "background"
+        self.time = 0
+
+    def update(self):
+        self.time += 1
 
     def draw(self):
         for x in range(0,16):
             for y in range(0,16):
-                pyxel.blt(x * self.tile_size,y * self.tile_size,0,
-                  0,0,self.tile_size,self.tile_size,0)
+                if self.time % 30 <= 15:
+                    pyxel.blt(x * self.tile_size,y * self.tile_size,0,
+                                0,0,self.tile_size,self.tile_size,0)
+                else:
+                    pyxel.blt(x * self.tile_size,y * self.tile_size,0,
+                                16,0,self.tile_size,self.tile_size,0)
 
 class TitleLogo(pyxphys.GameObject):
     def __init__(self):
-        super().__init__(x=100, y=20)
+        super().__init__(x=100, y=20, z=1)
         self.name = "title logo"
 
     def draw(self):
@@ -42,13 +46,36 @@ class TitleLogo(pyxphys.GameObject):
                   0,16,47,32, 0,
                   rotate=0, scale=2.0)
 
-class Text_PressEnter(pyxphys.GameObject):
+class Text(pyxphys.GameObject):
+    time : int
     def __init__(self):
-        super().__init__(x=100, y=20)
-        self.name = "text press enter"
+        super().__init__(x=75, y=150, z=1)
+        self.name = "text"
+        self.time = 0
+    
+    def update(self):
+        self.time += 1
 
     def draw(self):
-        pyxel.text(75, 150, "PRESS ENTER", pyxel.COLOR_WHITE)
+        if self.time % 30 <= 15:
+            shadow_text(self.x, self.y, "PRESS ENTER")
+            shadow_text(self.x, self.y + 12, "YAMASHITA YUI")
+            shadow_line(self.x, self.y + 8, self.x + 50, self.y + 8)
+        else:
+            shadow_text(self.x, self.y +1, "PRESS ENTER")
+            shadow_text(self.x, self.y + 13, "YAMASHITA YUI")
+            shadow_line(self.x, self.y + 9, self.x + 50, self.y + 9)
+
+def shadow_line(x1, y1, x2, y2):
+    pyxel.line(x1, y1 + 1, x2, y2 +1, pyxel.COLOR_BLACK)
+    pyxel.line(x1, y1, x2, y2, pyxel.COLOR_WHITE)
+
+def shadow_text(x, y, str):
+    o = [-1, 0, 1]
+    for ox in o:
+        for oy in o:
+            pyxel.text(x+ox, y+oy, str, pyxel.COLOR_BLACK)
+    pyxel.text(x, y, str, pyxel.COLOR_WHITE)
 
 #
 # ゲーム部分
@@ -73,21 +100,25 @@ class Ball(pyxphys.GameObject):
     def draw(self):
         pyxel.circ(self.x, self.y, self.radius, self.color)
 
-
 #
 # 最終的な処理
 #
 
-# game
-game = pyxphys.World(gravity = 1.1)
-game.add_object(Ball())
+# アプリ本体
+app = pyxphys.App(200,200)
+app.load_resource("assets/5_resource.pyxres")
 
 # title
 title = pyxphys.World()
-title.add_object(TitleManager(game))
+title.add_object(TitleManager())
 title.add_object(Background())
 title.add_object(TitleLogo())
-title.add_object(Text_PressEnter())
+title.add_object(Text())
+app.regist_world(title, name = "title")
 
-app.add_world(title)
+# game
+game = pyxphys.World(gravity = 1.1)
+game.add_object(Ball())
+app.regist_world(game, name = "game")
+
 app.run()

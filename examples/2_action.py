@@ -74,8 +74,8 @@ class Wall(pyxphys.GameObject):
 app = pyxphys.App(screen_x=300, screen_y=300, background_color=pyxel.COLOR_BLACK, debug_mode=False)
 world = pyxphys.World(gravity = 0.9)
 ui = pyxphys.World(gravity = 0)
-app.add_world(world)
-app.add_world(ui)
+app.regist_world(world, "world")
+app.regist_world(ui, "ui")
 
 world.add_object(Wall(x = 150, y = 290, height = 30 , width = 300))
 world.add_object(Player())
